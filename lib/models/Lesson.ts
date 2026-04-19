@@ -36,7 +36,7 @@ const LessonSchema = new mongoose.Schema({
     url: String,
     type: {
       type: String,
-      enum: ['article', 'video', 'book', 'tool'],
+      enum: ['article', 'video', 'book', 'tool', 'documentation', 'course'],
     },
   }],
   createdAt: {

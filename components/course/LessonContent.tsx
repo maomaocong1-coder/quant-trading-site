@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import Button from '@/components/ui/Button';
+
+const CodeBlock = dynamic(() => import('@/components/ui/CodeBlock'), { ssr: false });
 
 interface LessonContentProps {
   lesson: {
@@ -38,14 +40,6 @@ export default function LessonContent({
   onMarkComplete,
   onMarkIncomplete,
 }: LessonContentProps) {
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-
-  const copyCode = async (code: string) => {
-    await navigator.clipboard.writeText(code);
-    setCopiedCode(code);
-    setTimeout(() => setCopiedCode(null), 2000);
-  };
-
   return (
     <div className="flex-1 overflow-y-auto">
       <article className="max-w-3xl mx-auto px-6 py-8">
@@ -83,27 +77,18 @@ export default function LessonContent({
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Code Examples
             </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Click "Run" to execute Python code directly in your browser. The first load may take a few seconds to initialize the Python environment.
+            </p>
             <div className="space-y-6">
               {lesson.codeExamples.map((example, index) => (
-                <div key={index} className="bg-gray-900 rounded-lg overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-2 bg-gray-800">
-                    <span className="text-sm text-gray-300">{example.title}</span>
-                    <button
-                      onClick={() => copyCode(example.code)}
-                      className="text-gray-400 hover:text-white text-sm"
-                    >
-                      {copiedCode === example.code ? 'Copied!' : 'Copy'}
-                    </button>
-                  </div>
-                  <pre className="p-4 overflow-x-auto">
-                    <code className="text-sm text-gray-100">{example.code}</code>
-                  </pre>
-                  {example.explanation && (
-                    <p className="px-4 py-3 text-sm text-gray-300 bg-gray-800/50 border-t border-gray-700">
-                      {example.explanation}
-                    </p>
-                  )}
-                </div>
+                <CodeBlock
+                  key={index}
+                  code={example.code}
+                  language={example.language}
+                  title={example.title}
+                  explanation={example.explanation}
+                />
               ))}
             </div>
           </section>
